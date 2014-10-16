@@ -23,12 +23,7 @@ Pass a string of HTML to `stripAttr()`:
 var stripAttr = require('strip-attributes');
 var str = '<h1 id="a" class="b">Foo</h1>';
 
-stripAttr(str);
-```
-
-By default, all attributes are omitted:
-
-```js
+// By default, all attributes are omitted
 stripAttr(str);
 //=> '<h1>Foo</h1>'
 ```
