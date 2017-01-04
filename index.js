@@ -7,21 +7,32 @@
 
 'use strict';
 
-var cheerio = require('cheerio');
+var isObject = require('isobject');
+var extend = require('extend-shallow');
 var omit = require('object.omit');
 var pick = require('object.pick');
 
 module.exports = function (str, options) {
-  var $ = cheerio.load(str);
+  if (isObject(str)) {
+    options = str;
+    str = null;
+  }
 
-  var opts = options || {};
+  var opts = extend({}, options);
+  var cheerio = opts.cheerio || require('cheerio');
+  var $ = opts.$ || cheerio.load(str);
 
   $('*').each(function() {
     if (opts.keep) {
       this.attribs = pick(this.attribs, opts.keep);
-    } else if (opts.omit) {
+    }
+    if (opts.omit) {
       this.attribs = omit(this.attribs, opts.omit);
-    } else {
+    }
+    if (typeof opts.filter === 'function') {
+      this.attribs = opts.filter(this);
+    }
+    if (!opts.omit && !opts.keep && !opts.filter) {
       this.attribs = {};
     }
   });
